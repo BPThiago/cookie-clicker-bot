@@ -8,6 +8,7 @@ class CookieClicker:
         url = "https://orteil.dashnet.org/cookieclicker/"
         self.driver = webdriver.Firefox()
         self.driver.get(url)
+        self.elements = {}
         sleep(5)
     
 
@@ -18,10 +19,11 @@ class CookieClicker:
         sleep(5)
 
 
-    def click_cookie(self, qtd: int): 
-        cookie = self.driver.find_element(By.ID, "bigCookie")
+    def click_cookie(self, qtd: int):
+        if "cookie" not in self.elements:
+            self.elements["cookie"] = self.driver.find_element(By.ID, "bigCookie")
         for _ in range(qtd):
-            cookie.click()
+            self.elements["cookie"].click()
 
 
     def buy_items(self):
@@ -49,33 +51,28 @@ class CookieClicker:
 
     
     def switch_menu(self):
-        self.driver.find_element(By.ID, "prefsButton").click()
+        if "menu" not in self.elements:
+            self.elements["menu"] = self.driver.find_element(By.ID, "prefsButton")
+        self.elements["menu"].click()
 
 
     def load_state(self):
-        try:
-            self.clean_achievement_list()
-            self.switch_menu()
-            self.driver.find_element(By.XPATH, '//*[@id="menu"]/div[3]/div/div[5]/a[2]').click()
-            self.switch_menu()
-        except:
-            pass
+        self.clean_achievement_list()
+        self.switch_menu()
+        if "load" not in self.elements:
+            self.elements["load"] = self.driver.find_element(By.XPATH, '//*[@id="menu"]/div[3]/div/div[5]/a[2]')
+        self.elements["load"].click()
+        self.switch_menu()
 
 
     def save_state(self):
-        try:
-            self.clean_achievement_list()
-            self.switch_menu()
-            self.driver.find_element(By.XPATH, '//*[@id="menu"]/div[3]/div/div[5]/a[1]').click()
-            self.switch_menu()
-        except:
-            pass
+        self.driver.execute_script("Game.FileSave();PlaySound('snd/tick.mp3');")
 
 
     def exit(self, save: bool):
         if save:
             self.save_state()
-            sleep(2)
+            sleep(1)
         self.driver.quit()
 
 
@@ -93,3 +90,4 @@ if __name__ == "__main__":
         web.click_cookie(5)
         web.buy_items()
     web.exit(True)
+
