@@ -43,11 +43,7 @@ class CookieClicker:
     
 
     def clean_achievement_list(self):
-        try:
-            while True:
-                self.driver.find_element(By.XPATH, "/html/body/div/div[2]/div[9]/div[1]/div[1]").click()
-        except:
-            pass  # There is no achievement to clean
+        self.driver.execute_script("Game.CloseNotes();")
 
     
     def switch_menu(self):
@@ -90,4 +86,3 @@ if __name__ == "__main__":
         web.click_cookie(5)
         web.buy_items()
     web.exit(True)
-
